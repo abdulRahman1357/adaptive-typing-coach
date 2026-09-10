@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Keystep — private typing coach</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header>
+        <div>
+          <p class="eyebrow">LOCAL-ONLY PRACTICE COACH</p>
+          <h1>Keystep</h1>
+          <p class="lede">Build accuracy and keyboard confidence before chasing speed.</p>
+        </div>
+        <div class="privacy-badge">🔒 Practice events stay in this browser</div>
+      </header>
+
+      <section class="setup card">
+        <div>
+          <label for="stage">Practice stage</label>
+          <select id="stage">
+            <option value="hunt">1. Find one key</option>
+            <option value="zone">2. Finger zones</option>
+            <option value="transition">3. Key transitions</option>
+            <option value="word">4. Words</option>
+            <option value="sentence">5. Sentences</option>
+            <option value="speed">6. Gentle speed test</option>
+          </select>
+        </div>
+        <div>
+          <label for="difficulty">Starting pace</label>
+          <select id="difficulty">
+            <option value="easy">Easy · accuracy first</option>
+            <option value="steady">Steady</option>
+            <option value="challenge">Challenge</option>
+          </select>
+        </div>
+        <button id="new-round" class="primary">New practice round</button>
+      </section>
+
+      <section class="practice-grid">
+        <article class="card practice-card">
+          <div class="round-meta"><span id="stage-label">Find one key</span><span id="round-status">Ready</span></div>
+          <p id="instruction" class="instruction">Press the highlighted key once. We measure only your first attempt.</p>
+          <div id="target-display" class="target-display" aria-live="polite"></div>
+          <div id="typed-display" class="typed-display" aria-live="polite"></div>
+          <input id="practice-input" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Type the practice target here" placeholder="Click here, then type" />
+          <p class="small-note">This input captures practice only. It never listens outside this box and ignores password/private fields.</p>
+        </article>
+
+        <aside class="card coach-card">
+          <h2>Live signals</h2>
+          <div class="metrics">
+            <div><span>Accuracy</span><strong id="live-accuracy">—</strong></div>
+            <div><span>Speed</span><strong id="live-wpm">—</strong></div>
+            <div><span>Corrections</span><strong id="live-corrections">0</strong></div>
+            <div><span>Hesitations</span><strong id="live-hesitations">0</strong></div>
+          </div>
+          <p id="coach-hint" class="coach-hint">Start gently. Looking for keys is expected at first.</p>
+        </aside>
+      </section>
+
+      <section class="card keyboard-card">
+        <div class="section-heading"><div><p class="eyebrow">YOUR 3-FINGER MAP</p><h2>Six fingers, intentional zones</h2></div><button id="toggle-map" class="quiet">Show full map</button></div>
+        <div id="finger-legend" class="finger-legend"></div>
+        <div id="keyboard" class="keyboard" aria-label="Keyboard finger map"></div>
+        <details class="map-settings">
+          <summary>Customize this mapping</summary>
+          <p>These are physical key codes, so the finger zones remain consistent across keyboard labels. Keep every code assigned once.</p>
+          <div id="map-config" class="map-config"></div>
+          <button id="reset-map" class="quiet">Restore V1 default map</button>
+        </details>
+      </section>
+
+      <section class="card analysis-card">
+        <div class="section-heading"><div><p class="eyebrow">AFTER EACH ROUND</p><h2>Your local practice analysis</h2></div><button id="clear-data" class="quiet danger">Clear local history</button></div>
+        <div id="summary" class="summary empty">Finish a round to see what slowed you down and what to practice next.</div>
+        <details>
+          <summary>Event data (structured, local, ready for a future optional AI layer)</summary>
+          <pre id="event-preview">[]</pre>
+        </details>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
