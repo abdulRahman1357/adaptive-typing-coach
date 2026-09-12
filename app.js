@@ -31,17 +31,24 @@ const huntKeys = ['w','s','x','e','d','c','r','f','v','t','g','b','y','u','h','j
 const words = ['sad','ask','dad','fall','jazz','milk','kind','flash','garden','jungle','market','planet','quick','brave','smooth','typing','practice','keyboard','comfort'];
 const sentences = ['small steps build steady skill', 'keep your eyes relaxed and your hands calm', 'accuracy comes before speed', 'practice makes the keyboard feel familiar'];
 const transitions = ['as','sd','df','fj','jk','kl','er','re','ty','yu','ui','io','gh','hj','nm','mn','de','ki'];
+const staticExerciseProvider = ExerciseProvider.createStaticExerciseProvider({ content: { huntKeys, words, sentences, transitions } });
 const $ = id => document.getElementById(id);
 let round = null, history = JSON.parse(localStorage.getItem('keystep-v1') || '[]'), fullMap = false;
 
 function choose(list){ return list[Math.floor(Math.random()*list.length)]; }
 function huntSequence(length=5){ return [...huntKeys].sort(()=>Math.random()-.5).slice(0,length); }
+function staticExerciseFallback({stage}){
+  if(stage==='hunt') return {exercise:{kind:'hunt',items:huntSequence()}};
+  if(stage==='zone') return {exercise:{kind:'zone',finger:'left-index',items:['r']}};
+  if(stage==='transition') return {exercise:{kind:'transition',items:['gh']}};
+  if(stage==='word') return {exercise:{kind:'word',items:['milk']}};
+  if(stage==='sentence' || stage==='speed') return {exercise:{kind:'sentence',items:['smooth milk.']}};
+  return null;
+}
 function targetFor(stage) {
-  if(stage==='hunt') return huntSequence();
-  if(stage==='zone') { const f=choose(Object.keys(fingerInfo).filter(x=>x!=='thumb')); const chars=fingerMap[f].map(c=>layouts.flat().find(x=>x[0]===c)?.[1]).filter(x=>x && /^[A-Z]$/.test(x)); return choose(chars).toLowerCase(); }
-  if(stage==='transition') return choose(transitions);
-  if(stage==='word') return choose(words);
-  if(stage==='sentence' || stage==='speed') return choose(sentences);
+  const result=ExerciseProvider.getValidatedExercise(staticExerciseProvider,{stage,fingerMap},ExerciseValidator,staticExerciseFallback);
+  if(!result.valid) return stage==='hunt'?[]:'';
+  return result.exercise.kind==='hunt'?result.exercise.items:choose(result.exercise.items);
 }
 function stageName(stage){ return ({hunt:'Find one key',zone:'Finger zones',transition:'Key transitions',word:'Word practice',sentence:'Sentence practice',speed:'Gentle speed test'})[stage]; }
 function startRound(){
